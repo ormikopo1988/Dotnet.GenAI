@@ -1,0 +1,97 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{B8076284-5CAD-42EF-AFD4-13F8FF6E0CF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.Common", "demos\Dotnet.GenAI.Common\Dotnet.GenAI.Common.csproj", "{49A1F790-6E52-D572-D862-649A784AE409}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.RawImplementation", "demos\Dotnet.GenAI.RawImplementation\Dotnet.GenAI.RawImplementation.csproj", "{BB32E82C-1213-2BF7-B02B-4D86721E5FFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.BasicAzureOpenAISample", "demos\Dotnet.GenAI.BasicAzureOpenAISample\Dotnet.GenAI.BasicAzureOpenAISample.csproj", "{6DE0F26E-5695-2FDF-2A47-84B06A8A34BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.ExtensionsConsoleAgent", "demos\Dotnet.GenAI.ExtensionsConsoleAgent\Dotnet.GenAI.ExtensionsConsoleAgent.csproj", "{1E84444E-2A3E-109C-8F8D-34CB8402AA39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.SemanticKernelConsoleAgent", "demos\Dotnet.GenAI.SemanticKernelConsoleAgent\Dotnet.GenAI.SemanticKernelConsoleAgent.csproj", "{C903BB8A-A6EA-D46D-C74A-729BEE63E85E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.MyCareerAssistant.ServiceDefaults", "apps\Dotnet.GenAI.MyCareerAssistant.ServiceDefaults\Dotnet.GenAI.MyCareerAssistant.ServiceDefaults.csproj", "{0498C6C0-5198-3064-7BA1-0132398178B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.MyCareerAssistant", "apps\Dotnet.GenAI.MyCareerAssistant\Dotnet.GenAI.MyCareerAssistant.csproj", "{A937E9DA-9135-492F-AC45-F34D1EF8D437}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.MyCareerAssistant.AppHost", "apps\Dotnet.GenAI.MyCareerAssistant.AppHost\Dotnet.GenAI.MyCareerAssistant.AppHost.csproj", "{0AF62448-7935-87DF-DBFC-F57B06B13354}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "apps\docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.AgentFrameworkApi", "samples\Dotnet.GenAI.AgentFrameworkApi\Dotnet.GenAI.AgentFrameworkApi.csproj", "{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49A1F790-6E52-D572-D862-649A784AE409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49A1F790-6E52-D572-D862-649A784AE409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49A1F790-6E52-D572-D862-649A784AE409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49A1F790-6E52-D572-D862-649A784AE409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB32E82C-1213-2BF7-B02B-4D86721E5FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB32E82C-1213-2BF7-B02B-4D86721E5FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB32E82C-1213-2BF7-B02B-4D86721E5FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB32E82C-1213-2BF7-B02B-4D86721E5FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DE0F26E-5695-2FDF-2A47-84B06A8A34BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE0F26E-5695-2FDF-2A47-84B06A8A34BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE0F26E-5695-2FDF-2A47-84B06A8A34BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE0F26E-5695-2FDF-2A47-84B06A8A34BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E84444E-2A3E-109C-8F8D-34CB8402AA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E84444E-2A3E-109C-8F8D-34CB8402AA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E84444E-2A3E-109C-8F8D-34CB8402AA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E84444E-2A3E-109C-8F8D-34CB8402AA39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C903BB8A-A6EA-D46D-C74A-729BEE63E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C903BB8A-A6EA-D46D-C74A-729BEE63E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C903BB8A-A6EA-D46D-C74A-729BEE63E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C903BB8A-A6EA-D46D-C74A-729BEE63E85E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0498C6C0-5198-3064-7BA1-0132398178B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0498C6C0-5198-3064-7BA1-0132398178B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0498C6C0-5198-3064-7BA1-0132398178B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0498C6C0-5198-3064-7BA1-0132398178B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A937E9DA-9135-492F-AC45-F34D1EF8D437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A937E9DA-9135-492F-AC45-F34D1EF8D437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A937E9DA-9135-492F-AC45-F34D1EF8D437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A937E9DA-9135-492F-AC45-F34D1EF8D437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AF62448-7935-87DF-DBFC-F57B06B13354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AF62448-7935-87DF-DBFC-F57B06B13354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AF62448-7935-87DF-DBFC-F57B06B13354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AF62448-7935-87DF-DBFC-F57B06B13354}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{49A1F790-6E52-D572-D862-649A784AE409} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BB32E82C-1213-2BF7-B02B-4D86721E5FFC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6DE0F26E-5695-2FDF-2A47-84B06A8A34BE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1E84444E-2A3E-109C-8F8D-34CB8402AA39} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C903BB8A-A6EA-D46D-C74A-729BEE63E85E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0498C6C0-5198-3064-7BA1-0132398178B9} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
+		{A937E9DA-9135-492F-AC45-F34D1EF8D437} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
+		{0AF62448-7935-87DF-DBFC-F57B06B13354} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
+		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF} = {B8076284-5CAD-42EF-AFD4-13F8FF6E0CF3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {956D3219-F090-433C-A4F4-2BBC5A4CE71E}
+	EndGlobalSection
+EndGlobal

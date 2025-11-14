@@ -1,0 +1,55 @@
+services:
+  dotnet.genai.mycareerassistant:
+    image: dotnetgenaimycareerassistant:1.0.0
+    hostname: dotnet.genai.mycareerassistant
+    container_name: dotnetgenaimycareerassistant
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dotnet.GenAI.MyCareerAssistant/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test1234!
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - PLAYWRIGHT_FORCE_ISOLATED=1
+      - PLAYWRIGHT_BROWSERS_NO_SANDBOX=1
+      - CHROMIUM_FLAGS=--no-sandbox --disable-dev-shm-usage --isolated
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=MyCareerAssistantDb;Username=postgres;Password=postgres;Include Error Detail=true
+    ports:
+      - "5001:443"
+      - "5000:80"
+    volumes:
+      - ${USERPROFILE}/.aspnet/https:/https:ro
+    
+  postgres:
+    image: pgvector/pgvector:pg17
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    hostname: postgres
+    container_name: mycareerassistantdb
+    environment:
+      - POSTGRES_DB=MyCareerAssistantDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/db:/var/lib/postgresql
+      - ./.containers/db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  my-pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: my-pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=diktyas1988@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - 82:80

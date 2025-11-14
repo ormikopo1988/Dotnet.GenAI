@@ -1,0 +1,13 @@
+name: TellJoke
+template: |
+  Tell me a joke about {{$topic}}.
+template_format: semantic-kernel
+description: A function that generates a joke about a topic.
+execution_settings:
+  default:
+    max_tokens: 150
+    temperature: 0.1
+input_variables:
+  - name: topic
+    description: The topic of the joke.
+    is_required: true
