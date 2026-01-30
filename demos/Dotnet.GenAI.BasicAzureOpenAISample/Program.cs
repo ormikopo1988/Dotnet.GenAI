@@ -8,14 +8,16 @@ using System.Text.Json;
 
 DotEnv.Load();
 
-var azureOpenAiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY") ?? 
-    throw new InvalidOperationException("Missing AZURE_OPENAI_API_KEY");
+var azureOpenAiKey = 
+    Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY") ?? 
+        throw new InvalidOperationException("Missing AZURE_OPENAI_API_KEY");
 
 AzureOpenAIClient azureClient = new(
     new Uri("https://{azureOpenAiResourceName}.openai.azure.com"), // Change this to your Azure OpenAI endpoint
     new ApiKeyCredential(azureOpenAiKey));
 
-var chatClient = azureClient.GetChatClient("gpt-4.1-mini"); // Change this to your deployed model name
+var chatClient = azureClient
+    .GetChatClient("gpt-4.1-mini"); // Change this to your deployed model name
 
 List<ChatMessage> messages = 
 [
@@ -45,6 +47,7 @@ var weatherTool = ChatTool.CreateFunctionTool(
     }
     """)
 );
+
 ChatCompletionOptions chatCompletionOptions = new()
 {
     Tools = { weatherTool }
@@ -82,7 +85,10 @@ while (true)
 
             foreach (ChatToolCall toolCall in completion.Value.ToolCalls)
             {
-                messages.Add(new ToolChatMessage(toolCall.Id, GetToolCallContent(toolCall)));
+                messages.Add(
+                    new ToolChatMessage(
+                        toolCall.Id, 
+                        GetToolCallContent(toolCall)));
             }
         }
         else
@@ -112,9 +118,15 @@ string GetToolCallContent(ChatToolCall toolCall)
         // Validate arguments before using them; it's not always guaranteed to be valid JSON.
         try
         {
-            using JsonDocument argumentsDocument = JsonDocument.Parse(toolCall.FunctionArguments);
+            using JsonDocument argumentsDocument = 
+                JsonDocument.Parse(
+                    toolCall.FunctionArguments);
 
-            if (!argumentsDocument.RootElement.TryGetProperty("location", out JsonElement locationElement))
+            if (!argumentsDocument
+                .RootElement
+                .TryGetProperty(
+                    "location", 
+                    out JsonElement locationElement))
             {
                 Console.Error.WriteLine("Missing required \"location\" argument.");
             }
@@ -122,9 +134,15 @@ string GetToolCallContent(ChatToolCall toolCall)
             {
                 var location = locationElement.GetString()!;
 
-                if (argumentsDocument.RootElement.TryGetProperty("unit", out JsonElement unitElement))
+                if (argumentsDocument
+                    .RootElement
+                    .TryGetProperty(
+                        "unit", 
+                        out JsonElement unitElement))
                 {
-                    return GetCurrentWeather(location, unitElement.GetString()!);
+                    return GetCurrentWeather(
+                        location, 
+                        unitElement.GetString()!);
                 }
                 else
                 {
@@ -137,6 +155,7 @@ string GetToolCallContent(ChatToolCall toolCall)
             Console.Error.WriteLine("JsonException (bad arguments).");
         }
     }
+
     // Handle unexpected tool calls
     throw new NotImplementedException();
 }
