@@ -24,7 +24,7 @@ A full-stack Blazor web application that serves as an AI-powered career assistan
 - `system-prompt.md` – Prompt templates and tool scenarios
 - `Dockerfile` – Containerized deployment
 
-**Technology Stack:** Blazor, .NET 9, Azure OpenAI, pgvector, PostgreSQL, DOMPurify, marked.js, PDF.js
+**Technology Stack:** Blazor, .NET, Azure OpenAI, pgvector, PostgreSQL, DOMPurify, marked.js, PDF.js
 
 ### demos – Educational Examples
 
@@ -61,7 +61,7 @@ ASP.NET Core API demonstrating agent patterns with Semantic Kernel, including RA
 | Layer | Technologies |
 |-------|--------------|
 | **Frontend** | Blazor, ASP.NET Core, Tailwind CSS, marked.js, DOMPurify, PDF.js |
-| **Backend** | .NET 9, Entity Framework Core, Semantic Kernel |
+| **Backend** | .NET, Entity Framework Core, Semantic Kernel |
 | **AI/ML** | Azure OpenAI, Azure AI Search, text-embedding-ada-002 |
 | **Data** | PostgreSQL, pgvector, EF Core migrations |
 | **Containers** | Docker, Docker Compose, .NET Aspire |
