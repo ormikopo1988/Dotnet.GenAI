@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11626.88 stable
+VisualStudioVersion = 18.4.11626.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -24,6 +24,22 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.MyCareerAssistant.AppHost", "apps\Dotnet.GenAI.MyCareerAssistant.AppHost\Dotnet.GenAI.MyCareerAssistant.AppHost.csproj", "{0AF62448-7935-87DF-DBFC-F57B06B13354}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "apps\docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D4F2E5A1-B8C3-4E7F-9A1D-6C8B3E5F7A2D}"
+	ProjectSection(SolutionItems) = preProject
+		docs\ai-tools.md = docs\ai-tools.md
+		docs\architecture.md = docs\architecture.md
+		docs\configuration.md = docs\configuration.md
+		docs\deployment.md = docs\deployment.md
+		docs\ingestion-pipeline.md = docs\ingestion-pipeline.md
+		docs\prompt-system.md = docs\prompt-system.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{49157273-C34E-44F0-A1E6-C9E6E8F0089F}"
+	ProjectSection(SolutionItems) = preProject
+		CLAUDE.md = CLAUDE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

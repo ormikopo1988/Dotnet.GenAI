@@ -49,13 +49,6 @@ Reusable services and configurations:
 
 **Technology Stack:** Azure OpenAI, Semantic Kernel, Microsoft Extensions AI, .NET configuration abstractions
 
-### samples – Advanced Patterns
-
-#### **Dotnet.GenAI.AgentFrameworkApi**
-ASP.NET Core API demonstrating agent patterns with Semantic Kernel, including RAG (Retrieval-Augmented Generation), Azure AI Search integration, and structured agent orchestration.
-
-**Technology Stack:** Semantic Kernel, Azure AI Search, Azure OpenAI, ASP.NET Core
-
 ## Technology Stack Summary
 
 | Layer | Technologies |
