@@ -2,23 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Scope
+## Repository Overview
 
-This guidance focuses on the **Dotnet.GenAI.MyCareerAssistant** application inside the `apps/` folder -- a Blazor Server AI-powered career assistant chatbot with RAG, vector search, and MCP tool integration.
+.NET 10 repository with two areas: `apps/` (a full Blazor Server AI career chatbot) and `demos/` (educational AI pattern examples). The primary focus is **Dotnet.GenAI.MyCareerAssistant**.
 
-## Build and Run Commands
+## Build and Run
 
 ```bash
-# Build the app
+# Build the main app
 dotnet build apps/Dotnet.GenAI.MyCareerAssistant/Dotnet.GenAI.MyCareerAssistant.csproj
 
-# Run directly (requires PostgreSQL with pgvector running + Azure OpenAI config)
-dotnet run --project apps/Dotnet.GenAI.MyCareerAssistant
-
-# Run via .NET Aspire (auto-provisions PostgreSQL/pgvector, pgAdmin, Application Insights)
+# Run via .NET Aspire (recommended -- auto-provisions PostgreSQL/pgvector + pgAdmin)
 dotnet run --project apps/Dotnet.GenAI.MyCareerAssistant.AppHost
 
-# Run via Docker Compose (from repo root)
+# Run directly (requires external PostgreSQL with pgvector + Azure OpenAI config)
+dotnet run --project apps/Dotnet.GenAI.MyCareerAssistant
+
+# Run via Docker Compose
 docker compose -f apps/docker-compose.yml up --build
 
 # Add EF Core migration
@@ -28,128 +28,84 @@ dotnet ef migrations add <MigrationName> --project apps/Dotnet.GenAI.MyCareerAss
 docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 pgvector/pgvector:pg17
 ```
 
-## Architecture Overview
+No test projects exist. No CI/CD workflows are configured. No `global.json` or `Directory.Build.props`.
 
-The app is a .NET 10 Blazor Server application that acts as an AI career chatbot. It ingests PDF documents into a PostgreSQL pgvector store, performs semantic search for RAG-style responses, and integrates external tools via MCP (Model Context Protocol) and custom function tools.
+## Architecture
 
-### Startup Flow
+### Startup Pipeline (`Program.cs`)
 
-`Program.cs` orchestrates startup in this order:
-1. Azure Key Vault configuration (optional, if `AZURE_KEY_VAULT_ENDPOINT` is set)
-2. Aspire service defaults (`AddServiceDefaults`)
-3. OpenTelemetry/logging configuration (`LoggingConfigurator`)
-4. Blazor Server component registration
-5. MCP client initialization (`McpClientInitializer` -- connects to GitHub MCP + Playwright MCP servers)
-6. DI registration (`DependencyInjection.AddApplicationServices`)
-7. Database migration (`InitialiseDatabaseAsync` -- auto-applies EF Core migrations)
-8. PDF ingestion from `wwwroot/Data/` at startup
-9. App run
+Key Vault (optional via `AZURE_KEY_VAULT_ENDPOINT`) -> Aspire ServiceDefaults -> OpenTelemetry (`LoggingConfigurator`) -> Blazor Server -> MCP clients initialized (`McpClientInitializer`) -> DI registration (`DependencyInjection.cs`) -> DB migration (`ApplicationDbContextInitialiser`) -> PDF ingestion (`DataIngestor` + `PDFDirectorySource` from `wwwroot/Data/`) -> run
 
-### DI Registration Pattern
+### Three-Source Tool System
 
-`DependencyInjection.cs` uses modular `Add*` extension methods:
-- `AddAIServices` -- Azure OpenAI client, `IChatClient` (via `ChatClientBuilder` with logging + function invocation middleware), `ChatOptions` with merged tools, embedding generator
-- `AddAppServices` -- system prompt settings, prompt generators, Q&A service, business inquiry service, cosine similarity service
-- `AddBackgroundServices` -- `DataIngestionService` (periodic re-ingestion)
-- `AddData` -- EF Core with PostgreSQL/Npgsql, snake_case naming convention, auditable entity interceptor
-- `AddInjectionServices` -- pgvector store, vector collections for chunks and documents, `DataIngestor`, `SemanticSearch`
-- `AddEmailSender` -- SendGrid email
-- `AddSerperClient` -- Serper web search API
+AI tools are composed from three sources and merged into `ChatOptions.Tools`:
 
-### AI Tool System
+1. **Built-in tools** (`FunctionRegistry.cs`) -- uses reflection + `AIFunctionFactory.Create()` to register: `save_question_record_to_db`, `get_semantically_similar_question_record_from_db`, `save_business_inquiry_record_to_db`, `get_semantically_similar_business_inquiry_record_from_db`, `send_email`, `web_search`
+2. **MCP tools** (`McpClientInitializer.cs`) -- Playwright (stdio transport via `npx @playwright/mcp@latest`) and GitHub (HTTP transport to `api.githubcopilot.com/mcp/`), both filtered by allowlists in `appsettings.json` (`AllowedPlaywrightTools`, `AllowedGitHubTools`)
+3. **Search tool** -- registered inline in `Chat.razor.OnInitializedAsync()`, wraps `SemanticSearch.SearchAsync()` for pgvector RAG queries
 
-Tools are composed from two sources and merged into `ChatOptions.Tools`:
+### Dual Data Stores (same PostgreSQL instance)
 
-**Built-in tools** (`FunctionRegistry.cs`) -- created via `AIFunctionFactory.Create` using reflection on service interfaces:
-- `save_question_record_to_db` / `get_semantically_similar_question_record_from_db` -- Q&A tracking
-- `save_business_inquiry_record_to_db` / `get_semantically_similar_business_inquiry_record_from_db` -- business inquiry tracking
-- `send_email` -- SendGrid email delivery
-- `web_search` -- Serper web search
+- **EF Core** (`ApplicationDbContext`) -- relational storage for `QuestionAndAnswer` and `BusinessInquiry` entities, with cosine similarity via embedding column. Uses snake_case naming convention (`UseSnakeCaseNamingConvention()`), `AuditableEntityInterceptor` for auto-stamping `CreatedAt`/`UpdatedAt`
+- **pgvector collections** -- `IngestedChunk` and `IngestedDocument` for semantic vector search on ingested PDFs. Collection names: `data-dotnet_genai_mycareerassistant-chunks`, `data-dotnet_genai_mycareerassistant-documents`
 
-**MCP tools** (`McpClientInitializer.cs`) -- external tool servers:
-- Playwright MCP (browser automation via `npx @playwright/mcp@latest`)
-- GitHub MCP (via GitHub Copilot MCP endpoint, requires `GitHubPat`)
-- Both are filtered by allowlists in `appsettings.json` (`AllowedGitHubTools`, `AllowedPlaywrightTools`)
+### Entity Hierarchy
 
-**Search tool** -- additionally registered inline in `Chat.razor` via `AIFunctionFactory.Create(SearchAsync)`, calling `SemanticSearch.SearchAsync` against the pgvector store.
+```
+BaseEntity (Id: int)
+  -> BaseAuditableEntity (CreatedAt, UpdatedAt: DateTimeOffset)
+    -> BaseEmbeddableEntity (Embedding: string -- comma-separated floats)
+      -> QuestionAndAnswer (Question, Answer?)
+      -> BusinessInquiry (Name, Email, Request)
+```
 
-### Ingestion Pipeline
+### DI Registration Pattern (`DependencyInjection.cs`)
 
-`IIngestionSource` interface with `PDFDirectorySource` implementation:
-1. `PDFDirectorySource` enumerates `*.pdf` files in `wwwroot/Data/`
-2. Uses PdfPig (`NearestNeighbourWordExtractor` + `DocstrumBoundingBoxes`) for layout-aware text extraction
-3. Chunks text via Semantic Kernel's `TextChunker.SplitPlainTextParagraphs` (200 token max)
-4. `DataIngestor` manages vector collection lifecycle: ensures collections exist, detects new/modified/deleted documents by version (file last-write time), upserts chunks
-5. `DataIngestionService` background service re-runs ingestion on a configurable interval (`BackgroundServiceTimespanMin:DataIngestion` in config)
+Single extension method `AddApplicationServices()` delegates to private methods for each concern: `AddAIServices`, `AddAppServices`, `AddBackgroundServices`, `AddData`, `AddInjectionServices`, `AddEmailSender`, `AddSerperClient`. Settings use manual `configuration.Bind()` into singleton instances (not `IOptions<T>`).
+
+`IChatClient` is a singleton built with `ChatClientBuilder` wrapping `AzureOpenAIClient`, with logging and function invocation middleware. `ChatOptions` is registered as transient (new tool set per scope).
 
 ### Prompt System
 
-- `PromptTemplates/system-prompt.md` -- main system prompt template with placeholders (`{OwnerName}`, `{OwnerEmail}`, `{OwnerGitHubUrl}`, `{OwnerMediumUrl}`, `{OwnerSessionizeUrl}`, `{QuestionAndAnswerSection}`)
-- `SystemPromptGenerator` replaces placeholders with config values and appends answered Q&A records from the database
-- The system prompt defines 7 scenarios (GitHub, Medium, Sessionize, career facts/RAG, unknown questions, business inquiries, web search) each with strict tool-use instructions
-- Citation format is enforced as `<citation filename='...' page_number='...'>exact quote</citation>` -- the `ChatCitation.razor` component parses and renders these as PDF viewer links
-- `PromptTemplates/suggestion-prompt.md` -- drives `ChatSuggestions.razor` to generate follow-up suggestions after each response
+Templates in `PromptTemplates/` (copied to output on build). `SystemPromptGenerator` replaces placeholders (`{OwnerName}`, `{OwnerEmail}`, etc.) and appends dynamic Q&A data from DB. System prompt defines 7 scenario-based tool routing rules and enforces XML citation format: `<citation filename='...' page_number='...'>max 5 word quote</citation>`, parsed by `ChatCitation.razor`.
 
-### Blazor UI Components
+### Chat Component (`Chat.razor`)
 
-All under `Components/Pages/Chat/`:
-- `Chat.razor` -- main page (`/`), manages conversation state, streaming responses via `IChatClient.GetStreamingResponseAsync`, inline search tool
-- `ChatMessageList.razor` -- renders message history with client-side JS for markdown rendering
-- `ChatMessageItem.razor` -- individual message rendering
-- `ChatInput.razor` -- user input with JS interop
-- `ChatCitation.razor` -- citation rendering, links to PDF viewer at `lib/pdf_viewer/viewer.html`
-- `ChatSuggestions.razor` -- auto-generates follow-up suggestion buttons using structured output (`GetResponseAsync<string[]>`)
-- `ChatHeader.razor` -- header with "New Chat" reset
+Main page component at `/`. Injects `IChatClient`, `SemanticSearch`, `ISystemPromptGenerator`, `ChatOptions`. Uses `GetStreamingResponseAsync()` with cancellation support. Tracks `statefulMessageCount` for conversation continuity. Partial responses from cancelled streams are preserved in history.
 
-Client-side: `wwwroot/app.js` handles markdown rendering (marked.js + DOMPurify for sanitization), Tailwind CSS for styling.
+### Ingestion Pipeline
 
-### Entity Model
+`DataIngestor.IngestDataAsync()` orchestrates vector collection creation, document diffing, and upserts. `PDFDirectorySource` uses PdfPig (`NearestNeighbourWordExtractor` + `DocstrumBoundingBoxes`) for text extraction and Semantic Kernel's `TextChunker` for 200-token chunks. `DataIngestionService` runs ingestion periodically as a hosted service (interval from `BackgroundServiceTimespanMin:DataIngestion`).
 
-Entity hierarchy: `BaseEntity` (int Id) -> `BaseAuditableEntity` (CreatedAt/UpdatedAt) -> `BaseEmbeddableEntity` (Embedding as comma-separated float string)
+### Aspire AppHost
 
-Domain entities:
-- `QuestionAndAnswer` -- unanswered questions saved by AI tool, answers populated later by owner
-- `BusinessInquiry` -- business requests with name/email/request
-
-`CosineSimilarityService` computes similarity between input and stored entity embeddings (threshold: 0.8) to avoid duplicate records.
-
-`AuditableEntityInterceptor` auto-stamps `CreatedAt`/`UpdatedAt` on save.
-
-### Data Stores
-
-Two separate storage systems:
-1. **EF Core / PostgreSQL** -- `ApplicationDbContext` for `QuestionAndAnswer` and `BusinessInquiry` entities (relational data with embeddings stored as comma-separated strings)
-2. **pgvector / VectorStoreCollection** -- `IngestedDocument` and `IngestedChunk` collections for semantic search (embeddings managed by the vector store connector)
-
-Both use the same PostgreSQL instance (`DefaultConnection`).
+`AppHost.cs` provisions PostgreSQL (pgvector:pg17 image), pgAdmin, and wires the connection string `DefaultConnection` to the main app. The app waits for DB health before starting.
 
 ## Required Configuration
 
 Set via `appsettings.json`, user secrets, or environment variables:
 
-| Key | Required | Description |
-|-----|----------|-------------|
-| `AzureOpenAI:Endpoint` | Yes | Azure OpenAI endpoint URL |
+| Key | Required | Purpose |
+|-----|----------|---------|
+| `AzureOpenAI:Endpoint` | Yes | Azure OpenAI endpoint |
 | `AzureOpenAI:Key` | Yes | Azure OpenAI API key |
-| `AzureOpenAI:ChatModelDeploymentName` | Yes | Chat model deployment name |
-| `AzureOpenAI:EmbeddingModelDeploymentName` | Yes | Embedding model deployment name |
-| `ConnectionStrings:DefaultConnection` | Yes | PostgreSQL connection string (must be pgvector-enabled) |
-| `SystemPrompt:Owner:Name/Email/GitHubUrl/MediumUrl/SessionizeUrl` | No | Owner profile for system prompt |
-| `GitHubPat` | No | GitHub PAT for MCP GitHub tools |
-| `EmailSender:ApiKey/SenderEmail/SenderName` | No | SendGrid email settings |
-| `Serper:ApiKey` | No | Serper web search API key |
-| `AZURE_KEY_VAULT_ENDPOINT` | No | Azure Key Vault URI for production secrets |
-| `ApplicationInsights:ConnectionString` | No | App Insights (falls back to console OTel exporter) |
+| `AzureOpenAI:ChatModelDeploymentName` | Yes | Chat model deployment |
+| `AzureOpenAI:EmbeddingModelDeploymentName` | Yes | Embedding model deployment |
+| `ConnectionStrings:DefaultConnection` | Yes | PostgreSQL with pgvector |
+| `SystemPrompt:Owner:*` | No | Owner profile for prompt placeholders |
+| `GitHubPat` | No | GitHub PAT for MCP tools (GitHub tools disabled if empty) |
+| `EmailSender:ApiKey` | No | SendGrid API key |
+| `Serper:ApiKey` | No | Web search API key |
 
-## Key Libraries
+## Demo Projects (`demos/`)
 
-| Library | Version | Usage |
-|---------|---------|-------|
-| Microsoft.Extensions.AI | 10.4.x | `IChatClient` abstraction, `ChatClientBuilder`, `AIFunctionFactory`, embedding generation |
-| Microsoft.SemanticKernel | 1.74.x | pgvector connector (`AddPostgresVectorStore`), `TextChunker` for ingestion |
-| ModelContextProtocol | 1.2.x | MCP client for GitHub and Playwright tool servers |
-| PdfPig | 0.1.14 | PDF text extraction with layout analysis |
-| EF Core + Npgsql | 10.0.x | PostgreSQL data layer, migrations |
-| .NET Aspire | 9.5.x / 13.2.x | Local development orchestration (AppHost) |
-| SendGrid | 9.29.x | Email delivery via AI tool |
-| Azure.AI.OpenAI | 2.1.x | Azure OpenAI SDK |
+Educational progression from basic to advanced AI patterns, all .NET 10:
+- **BasicAzureOpenAISample** -- simple chat + function calling
+- **RawImplementation** -- raw HTTP Azure OpenAI API calls (no SDK)
+- **ExtensionsConsoleAgent** -- Microsoft.Extensions.AI console agent
+- **SemanticKernelConsoleAgent** -- Semantic Kernel agent with filters
+- **Common** -- shared library (GithubClient, InvoiceApiClient, HostConfig, DocumentationClient)
+
+## Detailed Documentation
+
+See `docs/` for deeper coverage: [architecture](docs/architecture.md), [ingestion pipeline](docs/ingestion-pipeline.md), [AI tools](docs/ai-tools.md), [prompt system](docs/prompt-system.md), [configuration](docs/configuration.md), [deployment](docs/deployment.md).
