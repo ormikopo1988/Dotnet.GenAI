@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11626.88 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{B8076284-5CAD-42EF-AFD4-13F8FF6E0CF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}"
 EndProject
@@ -26,8 +24,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.MyCareerAssistant.AppHost", "apps\Dotnet.GenAI.MyCareerAssistant.AppHost\Dotnet.GenAI.MyCareerAssistant.AppHost.csproj", "{0AF62448-7935-87DF-DBFC-F57B06B13354}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "apps\docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dotnet.GenAI.AgentFrameworkApi", "samples\Dotnet.GenAI.AgentFrameworkApi\Dotnet.GenAI.AgentFrameworkApi.csproj", "{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,10 +67,6 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,7 +81,6 @@ Global
 		{A937E9DA-9135-492F-AC45-F34D1EF8D437} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
 		{0AF62448-7935-87DF-DBFC-F57B06B13354} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A} = {1D107B6A-162F-4CCA-B1CF-C91E46EA9D94}
-		{22D51D8A-9CA9-C4D2-85DF-B597000F2EFF} = {B8076284-5CAD-42EF-AFD4-13F8FF6E0CF3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {956D3219-F090-433C-A4F4-2BBC5A4CE71E}
