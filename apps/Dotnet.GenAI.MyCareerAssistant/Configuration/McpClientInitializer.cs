@@ -130,6 +130,11 @@ namespace Dotnet.GenAI.MyCareerAssistant.Configuration
                 .GetSection(configSection)
                 .Get<string[]>() ?? [];
 
+            if (allowedTools.Length == 0)
+            {
+                return tools;
+            }
+
             return tools
                 .Where(t => 
                     allowedTools.Contains(t.Name));

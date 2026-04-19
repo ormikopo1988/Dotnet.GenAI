@@ -50,3 +50,6 @@ _ReSharper*/
 
 # Docker compose
 .containers/
+
+# Playwright MCP
+.playwright-mcp/
